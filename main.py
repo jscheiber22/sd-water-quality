@@ -36,16 +36,12 @@ class WaterQuality:
 				if text is not None:
 					locationText.append(self.cleanText(text))
 
-		# Essentially pops first value in list to remove column title
-		locations = locations[1:]
-
-		# Essentially pops first value in list to remove column title
-		locationText = locationText[3:]
+		info = dict(zip(locations[1:], locationText[3:]))
 
 
-		for x in range(0, len(locationText)):
-			print(locations[x])
-			print(locationText[x])
+		for key in info:
+			print(key)
+			print(info[key])
 			print('\n')
 
 
