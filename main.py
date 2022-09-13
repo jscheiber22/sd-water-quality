@@ -37,8 +37,22 @@ class WaterQuality:
 
 
 	def cleanText(self, text):
-		return text.group().replace('sans-serif;">', '').replace('</span>', '').replace('&#8217;', "'").replace('<span style="color: #ff0000;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif; color: #000000;">', '')
+		textToReplace = [
+			'sans-serif;">',
+			'</span>',
+			'&#8217;',
+			'<span style="color: #ff0000;"><span style="font-size: 10pt; font-family: arial, helvetica, sans-serif; color: #000000;">',
+			'<span style="color: #ff0000;"><span style="color: #000000;">',
+			'sans-serif; font-size: 10pt;">',
+			'<span style="color: #ff0000;">',
+			'<strong>',
+			'</strong>'
+		]
 
+		for value in textToReplace:
+			text = text.replace(value, '')
+
+		return text
 
 	# Curl the site and decipher the pulled table
 	def start(self):
@@ -52,10 +66,22 @@ class WaterQuality:
 			if '<tr' in html[x]:
 				loc = re.search('sans-serif;">.+</span>', html[x+2]) # Two lines below the <tr> tag is the location title
 				if loc is not None:
-					locations.append(self.cleanText(loc))
+					locations.append(self.cleanText(loc.group()))
+				else:
+					# If loc is None, the text was not found, but evidently there can be different html attributes around the text so this looks for another kind
+					loc = re.search('sans-serif; font-size: 10pt;">.+</span>', html[x+2])
+					if loc is not None:
+						locations.append(self.cleanText(loc.group()))
 				text = re.search('sans-serif;">.+</span>', html[x+3]) # Three lines below the <tr> tag is the location text
 				if text is not None:
-					locationText.append(self.cleanText(text))
+					locationText.append(self.cleanText(text.group()))
+				else:
+					text = re.search('sans-serif; font-size: 10pt;">.+</span>', html[x+3])
+					if text is not None:
+						locationText.append(self.cleanText(text.group()))
+
+		print(locations)
+		print(locationText)
 
 		# Creates a dictionary out of the cleaned up lists w title as key and text as value
 		# It is wrapped within another list for API purposes
