@@ -36,6 +36,7 @@ class WaterQuality:
 			exit()
 
 
+	# Renoves leftover regex text as well as anything else that ends up getting kept
 	def cleanText(self, text):
 		textToReplace = [
 			'sans-serif;">',
@@ -80,12 +81,10 @@ class WaterQuality:
 					if text is not None:
 						locationText.append(self.cleanText(text.group()))
 
-		print(locations)
-		print(locationText)
 
 		# Creates a dictionary out of the cleaned up lists w title as key and text as value
 		# It is wrapped within another list for API purposes
-		self.info = { 'qualities': dict(zip(locations[1:], locationText[1:])) } # This was previously [3:] until they only had 1 listed beach ("all beaches") but now it only works with [1:] which makes more sense anyway
+		self.info = { 'qualities': dict(zip(locations[1:], locationText[1:])) } # locationText was previously [3:] until they only had 1 listed beach ("all beaches") but now it only works with [1:] which makes more sense anyway
 
 
 if __name__ == '__main__':
